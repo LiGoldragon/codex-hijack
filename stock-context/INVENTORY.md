@@ -1,7 +1,7 @@
 # Codex CLI Stock Context Inventory
 
 Subject: complete inventory of the base context and harness-composed blocks in
-Codex CLI 0.149.1.
+Codex CLI 0.149.1. Walk scope narrowed to GPT-5.6 only per psyche directive.
 
 Version witnessed: **0.149.1**
 Binary: `/nix/store/a2hlxqhdyc642f8m6zhgkl5l2cbh2bks-codex-0.149.1/libexec/codex`
@@ -343,18 +343,158 @@ impose OpenAI's safety UX regardless of the user's own security model.
 
 ### Unknowns
 
-- The server-catalog `instructions_template` (Block 13) is fetched at runtime
-  from OpenAI's servers. Only one template file (`gpt-5.2-codex_instructions_template.md`)
-  was found in the source; the actual templates served may differ. This is a
-  blocker for complete documentation of what the model actually receives.
 - The `collaboration_mode` messages from the server catalog are not in the source
   tree; their content is unknown.
+
+## GPT-5.6 base context (server-catalog)
+
+Walk scope: GPT-5.6 only, per psyche directive ("we dont care about anything but 5.6").
+
+### Model witnessed
+
+Configured model: `gpt-5.6-sol` (from `~/.codex/config.toml` key `model`).
+All three 5.6 variants (`gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`) share
+an identical `instructions_template` (17730 chars).
+
+### Selection path
+
+No compiled-in prompt file matches any 5.6 model name. The 8 compiled-in files
+stop at GPT-5.2. The selection priority chain (from
+`codex-rs/core/src/session/mod.rs` lines 648-661):
+
+```rust
+let base_instructions = config
+    .base_instructions
+    .clone()
+    .or_else(|| conversation_history.get_base_instructions().map(|s| s.text))
+    .unwrap_or_else(|| model_info.get_model_instructions(config.personality));
+```
+
+1. `config.base_instructions` -- not set in this setup's config.toml (no
+   `instructions` or `model_instructions_file` key present).
+2. `conversation_history.get_base_instructions()` -- only applies to resumed
+   threads.
+3. `model_info.get_model_instructions(config.personality)` -- the fallback.
+
+`get_model_instructions` (from `codex-rs/protocol/src/openai_models.rs` line 507)
+reads `model_messages.instructions_template` from the server catalog. For
+gpt-5.6-sol, `instructions_variables` is null, so the template is returned
+verbatim with no substitution. The `personality = "pragmatic"` config setting
+does not affect the base context; personality is injected as a separate
+developer-role message (Block 9).
+
+Path taken: **server-catalog `instructions_template`**, verbatim, no substitution.
+
+### Capture method
+
+Source: `~/.codex/models_cache.json`, which is the local cache of the server
+catalog fetched by the Codex CLI at runtime from OpenAI's servers.
+
+- `fetched_at`: `2026-08-25T15:47:00.672020578Z`
+- `etag`: `W/"88ec06819eef0168a374351aeec2bc6c"`
+- `client_version`: `0.149.1`
+
+The `instructions_template` field for `gpt-5.6-sol` was extracted via Python
+JSON parsing and written verbatim to
+`base-prompts/gpt-5.6_instructions_template.md` (17730 chars, 168 lines).
+
+All three 5.6 model variants have byte-identical templates (verified by hash
+comparison).
+
+### Verbatim file
+
+`base-prompts/gpt-5.6_instructions_template.md`
+
+### Block inventory of the 5.6 base context
+
+The 5.6 template is structurally different from the compiled-in GPT-5.1/5.2
+prompts. It is 168 lines, organized as:
+
+| Block | Lines | Heading | Content summary |
+|-------|-------|---------|-----------------|
+| Identity | 1 | (opening) | "You are Codex, an agent based on GPT-5." |
+| Personality | 3-11 | # Personality | Rich personality, match user tone, own subjectivity |
+| Writing style | 12-15 | ## Writing style | Avoid over-formatting, CommonMark standard |
+| Technical communication | 18-23 | ## Technical communication | Lead with outcome, plain language, calibrate to user |
+| Working with user | 25-31 | # Working with the user | Commentary and final channels, message handling |
+| Context compaction | 31 | (inline) | Compaction awareness, continue naturally |
+| Intermediate commentary | 34-41 | ## Intermediate commentary | Concise updates, 60-second frequency, no final answers in commentary |
+| Final answer | 44-58 | ## Final answer | Formatting rules, file links, markdown rendering |
+| Visualizations | 62-74 | ### Visualizations | When to use visuals, prefer smallest useful |
+| Rules for work | 76-88 | # Rules for getting work done | rg preference, parallelization, shell safety |
+| File editing | 87-91 | ## File editing constraints | apply_patch, dirty worktree, no destructive git |
+| **Autonomy/persistence** | **93-112** | **## Autonomy and persistence** | **Request-type adaptation, authorization scope, blocker handling** |
+| Destructive actions | 114-131 | # Destructive Actions | Caution with destructive commands, recovery preference |
+| Skills | 133-168 | # Using skills | Skill discovery, trigger rules, coordination, context hygiene |
+
+### Autonomy and persistence material (verbatim)
+
+This is the block walk's first candidate. Located at lines 93-112 under
+`## Autonomy and persistence`:
+
+> Adapt accordingly based on the user's request type. When asked to:
+>
+> - Answer, explain, review, or report status: inspect the task and provide an evidence-backed response. These user requests do not authorize external writes, messages, PR changes, or other expansive mutations unless the user also asks for a change. Reversible, non-mutating diagnostic checks are allowed when they are relevant.
+> - Diagnose: determine the cause and explain it. Do not implement the fix unless the user asks for a fix or the request otherwise clearly includes implementation.
+> - Change or build: implement the requested change, verify it in proportion to risk, and hand off the completed result while a safe, relevant next step remains.
+> - Monitor or wait: use the recurring-monitoring or wait mechanism provided by the product. Unchanged external state is expected and is not by itself a blocker.
+>
+> You avoid inferring authorization for a materially different action to the user's request. Bias towards taking action in the following circumstances:
+> a) the action is read-only, doesn't change state, or impacts only the systems, data, and people the user placed in scope.
+> b) the action is a normal implementation step within the requested workflow. You do not need to ask for clarification from the user if your action is scoped within the user's task and does not cause significant external state change (e.g. tool calls to external applications).
+>
+> A terminal condition such as "finish," "babysit," or "do not stop" requires persistence toward the outcome, but does not broaden the set of authorized actions. When blocked, exhaust safe in-scope checks and alternatives.
+>
+> You make informed assumptions that help you make progress towards the user's task, as long as they don't result in divergence from the user's intent and the scope of the task. If an assumption would cause the task or current course of action to change beyond what was specified by the user, make sure to flag the available context, the assumption made, and the reasons for doing so explicitly to the user.
+>
+> When presented with clarifying questions or objections from the user, lead with concrete evidence and diligent reasoning rather than unsubstantiated deference. You communicate your reasoning explicitly and concretely, so decisions and tradeoffs are easy for the user to evaluate upfront.
+>
+> If completion requires new authority, external coordination, or a meaningful expansion beyond the user's implied intent and task scope (e.g. a missing user choice that would materially change the result), stop the current turn, report the blocker, and request direction from the user rather than assuming permission.
+
+### Comparison with compiled-in GPT-5.1/5.2 autonomy material
+
+The 5.6 autonomy section is substantially rewritten from the 5.1/5.2 versions.
+The 5.1/5.2 text said:
+
+> "Persist until the task is fully handled end-to-end within the current turn
+> whenever feasible"
+> "do not stop at analysis or partial fixes; carry changes through
+> implementation, verification"
+> "Autonomously resolve the query to the best of your ability"
+
+The 5.6 version replaces the blanket persistence directive with a
+request-type-adapted framework. It introduces explicit categories (answer,
+diagnose, change, monitor) with different authorization scopes, and adds
+explicit blocker-handling ("stop the current turn, report the blocker, and
+request direction"). The "autonomously resolve" language is gone.
+
+### Structural differences from GPT-5.1/5.2
+
+The 5.6 template differs from the compiled-in 5.1/5.2 prompts in several ways:
+
+- No "User Updates Spec" (5.1) or "Responsiveness" (5.2) section; replaced by
+  the commentary/final channel model
+- No "Sharing progress updates" section
+- No "Verbosity rules" by change size
+- No "Planning" section with plan tool micro-management
+- No "Task execution" section with step-by-step persistence
+- No "Validating your work" section
+- No "Ambition vs precision" section
+- Added "Personality" section with richer personality prescription
+- Added "Visualizations" guidance
+- Added "Skills" section (133-168) for skill-based workflows
+- Added "Destructive Actions" section with explicit safety rules
+- Added "Working with the user" section with commentary/final channel model
+- The tone prescription is different: 5.1/5.2 said "concise, direct, friendly";
+  5.6 says "excellent communicator with a curious, rich personality"
 
 ## Sources
 
 - openai/codex repository, tag `rust-v0.149.1`, commit `980a6d12`
 - Installed binary: `/nix/store/a2hlxqhdyc642f8m6zhgkl5l2cbh2bks-codex-0.149.1/libexec/codex`
-- Extraction method: `git show rust-v0.149.1:<path>` for all prompt files
+- Extraction method (compiled-in): `git show rust-v0.149.1:<path>` for all prompt files
+- Extraction method (5.6 server-catalog): `~/.codex/models_cache.json`, fetched 2026-08-25T15:47:00Z, etag `W/"88ec06819eef0168a374351aeec2bc6c"`, client_version 0.149.1
 - Context assembly code: `codex-rs/core/src/context/` module tree
-- Instructions resolution: `codex-rs/codex-home/src/instructions/mod.rs`
+- Session creation priority chain: `codex-rs/core/src/session/mod.rs` lines 648-661
+- Instructions resolution: `codex-rs/protocol/src/openai_models.rs` line 507 (`get_model_instructions`)
 - Prior verified witness: `/home/li/primary/verified/claude-code-context.md` (Claude Code, not Codex, but contains Codex 0.148.0 observations)
