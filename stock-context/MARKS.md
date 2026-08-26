@@ -9,6 +9,25 @@ psyche's rulings, recorded by flow 4ddc321d.
 | Block | Lines | Mark |
 |-------|-------|------|
 | Personality | 3–9 | **Replace** — replacement TBD |
+| Using skills | 133–167 | Review in progress — line marks below |
+
+## Global rulings for the replacement context
+
+- 2026-08-26 — vocabulary: every occurrence of agent/subagent in the
+  replacement context becomes flow/subflow, with a line explaining the
+  term (perhaps equating it with agent, since models are trained on
+  that term, and instructing use of flow terminology henceforth). The
+  grounding: a flow is a flow of thought; an intelligence is not a
+  single flow but a multitude of them; "agent" entails subjectivity
+  and misplaces it onto the single flow. The psyche's verbatim words
+  are in flows/4ddc321d/vision/flow.md.
+
+## Using skills — line marks (2026-08-26)
+
+- "Do not carry skills across turns unless re-mentioned." (line 140)
+  — **Delete**. Ruling: "this is definitely a removal."
+- The no-delegation paragraph (line 145): the psyche is "not a big
+  fan of how any of that whole paragraphed is worded"; no mark yet.
 
 ## Personality (2026-08-26)
 
