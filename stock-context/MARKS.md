@@ -9,7 +9,7 @@ psyche's rulings, recorded by flow 4ddc321d.
 | Block | Lines | Mark |
 |-------|-------|------|
 | Personality | 3–9 | **Replace** — replacement TBD |
-| Using skills | 133–167 | Review in progress — line marks below |
+| Using skills | 133–167 | **Delete** — whole block |
 
 ## Global rulings for the replacement context
 
@@ -22,12 +22,21 @@ psyche's rulings, recorded by flow 4ddc321d.
   and misplaces it onto the single flow. The psyche's verbatim words
   are in flows/4ddc321d/vision/flow.md.
 
-## Using skills — line marks (2026-08-26)
+## Using skills (2026-08-26)
 
-- "Do not carry skills across turns unless re-mentioned." (line 140)
-  — **Delete**. Ruling: "this is definitely a removal."
-- The no-delegation paragraph (line 145): the psyche is "not a big
-  fan of how any of that whole paragraphed is worded"; no mark yet.
+Ruling: "yes, mark it a delete." — the whole block, subsuming the
+earlier line mark on "Do not carry skills across turns unless
+re-mentioned." ("this is definitely a removal.").
+
+The reasoning: with the block gone, the harness still injects the
+skills catalog and $-mentioned skill bodies, and the authored strata
+carry the skill discipline — the expected behavior over that context
+is the desired behavior, so by the ruled principle ("Removal is
+better than addition, when the expected behavior is the desired
+behavior") the block's procedure adds nothing and its rituals cost
+context. The only mechanically loaded content (non-filesystem skill
+access, alias expansion) is dead weight in this setup, whose skills
+are filesystem-backed.
 
 ## Personality (2026-08-26)
 
