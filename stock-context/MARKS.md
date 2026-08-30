@@ -9,6 +9,7 @@ psyche's rulings, recorded by flow 4ddc321d.
 | Block | Lines | Mark |
 |-------|-------|------|
 | Personality | 3–9 | **Replace** — replacement TBD |
+| Working with the user + Intermediate commentary | 23–41 | **Replace** — at least in parts |
 | Using skills | 133–167 | **Delete** — whole block |
 
 ## Global rulings for the replacement context
@@ -21,6 +22,42 @@ psyche's rulings, recorded by flow 4ddc321d.
   single flow but a multitude of them; "agent" entails subjectivity
   and misplaces it onto the single flow. The psyche's verbatim words
   are in flows/4ddc321d/vision/flow.md.
+
+- 2026-08-26 — commentary: reserved for very rare cases, to minimize
+  the context cost it creates. The psyche's verbatim words
+  (flows/4ddc321d/vision/contextStrata.md): "I think we should reserve
+  it for very rare cases, minimize the cost that it creates on
+  context." Ground (flows/4ddc321d/reports/codexChannels.md,
+  reports/commentaryDiscouragement.md): commentary and final are the
+  same stratum — assistant-role messages differing only by a phase tag;
+  commentary is replayed every turn until compaction at full context
+  cost; no vendor lever exists for commentary frequency, so the
+  base-context instruction is the mechanism; the known risk of a
+  rare-commentary instruction is substitution (narrating instead of
+  acting, blocking questions left unasked), mitigated by pairing it
+  with "blocking questions go to the final channel". Client-side
+  filtering of prior-turn commentary from replayed history is a
+  separate, later engineering option.
+
+## Working with the user + Intermediate commentary (2026-08-30)
+
+Ruling: "mark as replace, at least in parts."
+
+The block (template lines 23–41 of
+base-prompts/gpt-5.6_instructions_template.md: the "# Working with
+the user" head through the "## Intermediate commentary" subsection,
+ending with the "Never praise your plan" line; the "## Final answer"
+subsections 43–74 are not part of this mark) mixes harness facts the
+model cannot infer with impositions. The harness facts worth keeping
+as plain statements: two channels exist — commentary for updates,
+final ends the turn; commentary collapses after the final answer;
+mid-turn user messages arrive; compaction happens. The impositions
+being replaced: the 60-second commentary cadence, the
+post-compaction mandate to "continue naturally and make reasonable
+assumptions about anything missing from the summary", the mid-turn-
+message arbitration micro-procedure, and the prohibition-form "Never
+praise your plan" line. Replace keeps the facts; extent of
+replacement within the block not yet ruled ("at least in parts").
 
 ## Using skills (2026-08-26)
 
